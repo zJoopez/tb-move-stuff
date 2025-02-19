@@ -267,9 +267,6 @@ local color_a_input = TBMenu:spawnTextField2(color_a_input_holder, color_a_input
 	inputType = KEYBOARD_INPUT.DEFAULT,
 	allowNegative = false,
 })
-color_a_input:addMouseHandlers(nil, function()
-	color_a_input.textfieldstr[1] = nil
-end)
 
 local adjust_button = UIElement:new({
 	parent = window,
@@ -286,7 +283,7 @@ adjust_button:addMouseHandlers(nil, function()
 	apply()
 end)
 
-local adjust_button = UIElement:new({
+local mod_change_button = UIElement:new({
 	parent = window,
 	pos = { 170, 330 },
 	size = { 150, 30 },
@@ -296,8 +293,8 @@ local adjust_button = UIElement:new({
 	shapeType = ROUNDED,
 	rounded = 5,
 })
-adjust_button:addAdaptedText(false, "Select Mod")
-adjust_button:addMouseHandlers(nil, function()
+mod_change_button:addAdaptedText(false, "Select Mod")
+mod_change_button:addMouseHandlers(nil, function()
 	Mods:showMain()
 end)
 
