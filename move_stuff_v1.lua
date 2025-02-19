@@ -1,5 +1,9 @@
 -- some spaghetti code by joope1
-package.path = package.path .. ";../?.lua"
+
+--should allow using seperate folder
+if not require("toriui/uielement") then
+	package.path = package.path .. ";../?.lua"
+end
 
 local uielement = require("toriui/uielement")
 local menu_defines = require("system/menu_defines")
@@ -172,20 +176,23 @@ local offset_z_input = TBMenu:spawnTextField2(offset_z_input_holder, offset_z_in
 local color_sect_label = UIElement:new({
 	parent = window,
 	pos = { 10, 250 },
-	size = { 150, 30 },
-	textAlign = LEFTMID,
+	size = { 70, 30 },
 })
 color_sect_label:addAdaptedText(false, "Color")
 
-local color_r_input_holder = UIElement:new({
+local color_r_input_label = UIElement:new({
 	parent = window,
 	pos = { 10, 290 },
-	size = { 75, 30 },
+	size = { 10, 30 },
+})
+color_r_input_label:addAdaptedText(false, "R")
+local color_r_input_holder = UIElement:new({
+	parent = window,
+	pos = { 30, 290 },
+	size = { 50, 30 },
 	interactive = true,
 	textfield = true,
-
 })
-
 local color_r_input = TBMenu:spawnTextField2(color_r_input_holder, color_r_input_holder.size, nil, "0", {
 	fontId = FONTS.MEDIUM,
 	textAlign = LEFTMID,
@@ -195,15 +202,19 @@ local color_r_input = TBMenu:spawnTextField2(color_r_input_holder, color_r_input
 	allowNegative = false,
 })
 
-local color_g_input_holder = UIElement:new({
+local color_g_input_label = UIElement:new({
 	parent = window,
 	pos = { 90, 290 },
-	size = { 75, 30 },
+	size = { 10, 30 },
+})
+color_g_input_label:addAdaptedText(false, "G")
+local color_g_input_holder = UIElement:new({
+	parent = window,
+	pos = { 110, 290 },
+	size = { 50, 30 },
 	interactive = true,
 	textfield = true,
-
 })
-
 local color_g_input = TBMenu:spawnTextField2(color_g_input_holder, color_g_input_holder.size, nil, "0", {
 	fontId = FONTS.MEDIUM,
 	textAlign = LEFTMID,
@@ -213,15 +224,19 @@ local color_g_input = TBMenu:spawnTextField2(color_g_input_holder, color_g_input
 	allowNegative = false,
 })
 
-local color_b_input_holder = UIElement:new({
+local color_b_input_label = UIElement:new({
 	parent = window,
 	pos = { 170, 290 },
-	size = { 75, 30 },
+	size = { 10, 30 },
+})
+color_b_input_label:addAdaptedText(false, "B")
+local color_b_input_holder = UIElement:new({
+	parent = window,
+	pos = { 190, 290 },
+	size = { 50, 30 },
 	interactive = true,
 	textfield = true,
-
 })
-
 local color_b_input = TBMenu:spawnTextField2(color_b_input_holder, color_b_input_holder.size, nil, "0", {
 	fontId = FONTS.MEDIUM,
 	textAlign = LEFTMID,
@@ -231,23 +246,30 @@ local color_b_input = TBMenu:spawnTextField2(color_b_input_holder, color_b_input
 	allowNegative = false,
 })
 
-local color_a_input_holder = UIElement:new({
+local color_a_input_label = UIElement:new({
 	parent = window,
 	pos = { 250, 290 },
-	size = { 75, 30 },
+	size = { 10, 30 },
+})
+color_a_input_label:addAdaptedText(false, "A")
+local color_a_input_holder = UIElement:new({
+	parent = window,
+	pos = { 270, 290 },
+	size = { 50, 30 },
 	interactive = true,
 	textfield = true,
-
 })
-
-local color_a_input = TBMenu:spawnTextField2(color_a_input_holder, color_a_input_holder.size, nil, "0", {
+local color_a_input = TBMenu:spawnTextField2(color_a_input_holder, color_a_input_holder.size, nil, "255", {
 	fontId = FONTS.MEDIUM,
 	textAlign = LEFTMID,
 	isNumeric = true,
 	returnKeyType = KEYBOARD_RETURN.SEND,
 	inputType = KEYBOARD_INPUT.DEFAULT,
-	allowNegative = false
+	allowNegative = false,
 })
+color_a_input:addMouseHandlers(nil, function()
+	color_a_input.textfieldstr[1] = nil
+end)
 
 local adjust_button = UIElement:new({
 	parent = window,
@@ -296,11 +318,10 @@ end
 
 function apply()
 	runCmd("clear")
-	painful_moving()
-	-- simple_moving()
+	process_request()
 end
 
-function painful_moving()
+function process_request()
 	local modName = find_mod(get_game_rules().mod) --find_mod doesn't have different returns for /lm and gui selected mod
 	local path = "../data/mod/" .. modName
 
@@ -318,10 +339,12 @@ function painful_moving()
 
 	local i_start = (tonumber(start_index_input.textfieldstr[1]) or 1)
 	local i_end = tonumber(end_index_input.textfieldstr[1]) or 256
+
 	local offset_x = tonumber(offset_x_input.textfieldstr[1]) or 0
 	local offset_y = tonumber(offset_y_input.textfieldstr[1]) or 0
 	local offset_z = tonumber(offset_z_input.textfieldstr[1]) or 0
 
+	local new_color_line = color_input_to_line()
 	local modified_lines = {} --tmp solution hopefully
 	local environment_objects = {}
 
@@ -331,7 +354,6 @@ function painful_moving()
 	echo("values set")
 
 	for i, line in pairs(content) do
-		
 		while true do --allows continue like behaviour
 			local match
 			match = tonumber(string.match(line, "^env_obj%s+(%d+)$"))
@@ -362,19 +384,13 @@ function painful_moving()
 
 			if line:match("^%s*color%s+") then
 				environment_objects[reader_env_obj_id].color = get_obj_color(reader_env_obj_id - 1)
-				if reader_env_obj_tracked == true then
-					modified_lines[i] = string.format(
-						"   color %.8f %.8f %.8f %.8f",
-						environment_objects[reader_env_obj_id].color[1],
-						environment_objects[reader_env_obj_id].color[2],
-						environment_objects[reader_env_obj_id].color[3],
-						environment_objects[reader_env_obj_id].color[4]
-					)
-					echo(modified_lines[i])
+				if reader_env_obj_tracked == true and new_color_line then
+					modified_lines[i] = new_color_line
 				end
 				break
 			end
-			break
+
+			break -- ensure loop is broken
 		end
 	end
 
@@ -401,6 +417,35 @@ function painful_moving()
 	--reload mod
 	runCmd("lm " .. "classic") -- mod swap required to update objects (mby better way exists)
 	runCmd("lm " .. modName)
+end
+
+function color_input_to_line()
+	local hasInput =
+		tonumber(color_r_input.textfieldstr[1]) or
+		tonumber(color_g_input.textfieldstr[1]) or
+		tonumber(color_b_input.textfieldstr[1]) or
+		tonumber(color_a_input.textfieldstr[1])
+	if not hasInput then
+		return nil
+	end
+
+	local color = {
+		r = tonumber(color_r_input.textfieldstr[1]) or 0,
+		g = tonumber(color_g_input.textfieldstr[1]) or 0,
+		b = tonumber(color_b_input.textfieldstr[1]) or 0,
+		a = tonumber(color_a_input.textfieldstr[1]) or 255
+	}
+	for key, val in pairs(color) do
+		if val < 1 then
+			color[key] = 0
+		elseif val > 254 then
+			color[key] = 1
+		else
+			color[key] = val / 255
+		end
+	end
+
+	return string.format("   color %.8f %.8f %.8f %.8f", color.r, color.g, color.b, color.a)
 end
 
 -- Simple and efficient, but this approach resets on new game :)))
