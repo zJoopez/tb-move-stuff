@@ -3,18 +3,19 @@ require("toriui/uielement")
 require("system.menu_defines")
 require("system.menu_manager")
 require("system.mods_manager")
+require("system.iofiles")
 
 -- UI stuff
 local header = UIElement:new({
-    pos = { 1500, 0 },
-    size = { 420, 40 },
+	pos = { 1590, 0 },
+	size = { 330, 40 },
 	bgColor = TB_MENU_DEFAULT_DARKER_COLOR,
 })
 
 local title = UIElement:new({
 	parent = header,
-    pos = { 0, 0 },
-    size = { 250, 40 },
+	pos = { 0, 0 },
+	size = { 250, 40 },
 	interactive = true,
 })
 title:addAdaptedText(false, "Mod Group Controls")
@@ -24,8 +25,8 @@ end)
 
 local x = UIElement:new({
 	parent = header,
-    pos = { 380, 5 },
-    size = { 35, 30 },
+	pos = { 285, 5 },
+	size = { 35, 30 },
 	bgColor = TB_MENU_DEFAULT_BG_COLOR,
 	hoverColor = TB_MENU_DEFAULT_LIGHTER_COLOR,
 	shapeType = ROUNDED,
@@ -38,26 +39,26 @@ x:addMouseHandlers(nil, function()
 end)
 
 local window = UIElement:new({
-    pos = { 1500, 40 },
-    size = { 420, 295 },
-    bgColor = TB_MENU_DEFAULT_BG_COLOR,
+	pos = { 1590, 40 },
+	size = { 330, 365 },
+	bgColor = TB_MENU_DEFAULT_BG_COLOR,
 })
 
 local start_id_label = UIElement:new({
-    parent = window,
-    pos = { 10, 10 },
-    size = { 150, 30 },
+	parent = window,
+	pos = { 10, 10 },
+	size = { 150, 30 },
 })
 start_id_label:addAdaptedText(false, "Start Object ID:")
 
 local start_index_input_holder = UIElement:new({
-    parent = window,
-    pos = { 170, 10 },
-    size = { 150, 30 },
+	parent = window,
+	pos = { 170, 10 },
+	size = { 150, 30 },
 	interactive = true,
 	textfield = true,
 })
-local start_index_input = TBMenu:spawnTextField2(start_index_input_holder, start_index_input_holder.size, nil, "0", {
+local start_index_input = TBMenu:spawnTextField2(start_index_input_holder, start_index_input_holder.size, "1", "1", {
 	fontId = FONTS.MEDIUM,
 	textAlign = LEFTMID,
 	isNumeric = true,
@@ -67,20 +68,20 @@ local start_index_input = TBMenu:spawnTextField2(start_index_input_holder, start
 })
 
 local start_id_label = UIElement:new({
-    parent = window,
-    pos = { 10, 50 },
-    size = { 150, 30 },
+	parent = window,
+	pos = { 10, 50 },
+	size = { 150, 30 },
 })
 start_id_label:addAdaptedText(false, "End Object ID:")
 
 local end_index_input_holder = UIElement:new({
-    parent = window,
-    pos = { 170, 50 },
-    size = { 150, 30 },
+	parent = window,
+	pos = { 170, 50 },
+	size = { 150, 30 },
 	interactive = true,
 	textfield = true,
 })
-local end_index_input = TBMenu:spawnTextField2(end_index_input_holder, end_index_input_holder.size, nil, "0", {
+local end_index_input = TBMenu:spawnTextField2(end_index_input_holder, end_index_input_holder.size, "256", "256", {
 	fontId = FONTS.MEDIUM,
 	textAlign = LEFTMID,
 	isNumeric = true,
@@ -90,23 +91,23 @@ local end_index_input = TBMenu:spawnTextField2(end_index_input_holder, end_index
 })
 
 local move_sect_label = UIElement:new({
-    parent = window,
-    pos = { 10, 90 },
-    size = { 150, 30 },
+	parent = window,
+	pos = { 10, 90 },
+	size = { 150, 30 },
 })
-move_sect_label:addAdaptedText(false, "Offset values")
+move_sect_label:addAdaptedText(false, "Position offset")
 
 local offset_x_label = UIElement:new({
-    parent = window,
-    pos = { 10, 130 },
-    size = { 100, 30 },
+	parent = window,
+	pos = { 10, 130 },
+	size = { 100, 30 },
 })
 offset_x_label:addAdaptedText(false, "Offset X:")
 
 local offset_x_input_holder = UIElement:new({
-    parent = window,
-    pos = { 170, 130 },
-    size = { 150, 30 },
+	parent = window,
+	pos = { 170, 130 },
+	size = { 150, 30 },
 	interactive = true,
 	textfield = true,
 })
@@ -116,20 +117,20 @@ local offset_x_input = TBMenu:spawnTextField2(offset_x_input_holder, offset_x_in
 	isNumeric = true,
 	allowDecimal = true,
 	returnKeyType = KEYBOARD_RETURN.SEND,
-	inputType = KEYBOARD_INPUT.DEFAULT 
+	inputType = KEYBOARD_INPUT.DEFAULT
 })
 
 local offset_y_label = UIElement:new({
-    parent = window,
-    pos = { 10, 170 },
-    size = { 100, 30 },
+	parent = window,
+	pos = { 10, 170 },
+	size = { 100, 30 },
 })
 offset_y_label:addAdaptedText(false, "Offset Y:")
 
 local offset_y_input_holder = UIElement:new({
-    parent = window,
-    pos = { 170, 170 },
-    size = { 150, 30 },
+	parent = window,
+	pos = { 170, 170 },
+	size = { 150, 30 },
 	interactive = true,
 	textfield = true,
 })
@@ -139,24 +140,24 @@ local offset_y_input = TBMenu:spawnTextField2(offset_y_input_holder, offset_y_in
 	isNumeric = true,
 	allowDecimal = true,
 	returnKeyType = KEYBOARD_RETURN.SEND,
-	inputType = KEYBOARD_INPUT.DEFAULT 
+	inputType = KEYBOARD_INPUT.DEFAULT
 })
 
 
 local offset_z_label = UIElement:new({
-    parent = window,
-    pos = { 10, 210 },
-    size = { 100, 30 },
+	parent = window,
+	pos = { 10, 210 },
+	size = { 100, 30 },
 })
 offset_z_label:addAdaptedText(false, "Offset Z:")
 
 local offset_z_input_holder = UIElement:new({
-    parent = window,
-    pos = { 170, 210 },
-    size = { 150, 30 },
+	parent = window,
+	pos = { 170, 210 },
+	size = { 150, 30 },
 	interactive = true,
 	textfield = true,
-	
+
 })
 local offset_z_input = TBMenu:spawnTextField2(offset_z_input_holder, offset_z_input_holder.size, nil, "0", {
 	fontId = FONTS.MEDIUM,
@@ -164,29 +165,108 @@ local offset_z_input = TBMenu:spawnTextField2(offset_z_input_holder, offset_z_in
 	isNumeric = true,
 	allowDecimal = true,
 	returnKeyType = KEYBOARD_RETURN.SEND,
-	inputType = KEYBOARD_INPUT.DEFAULT 
+	inputType = KEYBOARD_INPUT.DEFAULT
+})
+
+local color_sect_label = UIElement:new({
+	parent = window,
+	pos = { 10, 250 },
+	size = { 150, 30 },
+	textAlign = LEFTMID,
+})
+color_sect_label:addAdaptedText(false, "Color")
+
+local color_r_input_holder = UIElement:new({
+	parent = window,
+	pos = { 10, 290 },
+	size = { 75, 30 },
+	interactive = true,
+	textfield = true,
+
+})
+
+local color_r_input = TBMenu:spawnTextField2(color_r_input_holder, color_r_input_holder.size, nil, "0", {
+	fontId = FONTS.MEDIUM,
+	textAlign = LEFTMID,
+	isNumeric = true,
+	returnKeyType = KEYBOARD_RETURN.SEND,
+	inputType = KEYBOARD_INPUT.DEFAULT,
+	allowNegative = false,
+})
+
+local color_g_input_holder = UIElement:new({
+	parent = window,
+	pos = { 90, 290 },
+	size = { 75, 30 },
+	interactive = true,
+	textfield = true,
+
+})
+
+local color_g_input = TBMenu:spawnTextField2(color_g_input_holder, color_g_input_holder.size, nil, "0", {
+	fontId = FONTS.MEDIUM,
+	textAlign = LEFTMID,
+	isNumeric = true,
+	returnKeyType = KEYBOARD_RETURN.SEND,
+	inputType = KEYBOARD_INPUT.DEFAULT,
+	allowNegative = false,
+})
+
+local color_b_input_holder = UIElement:new({
+	parent = window,
+	pos = { 170, 290 },
+	size = { 75, 30 },
+	interactive = true,
+	textfield = true,
+
+})
+
+local color_b_input = TBMenu:spawnTextField2(color_b_input_holder, color_b_input_holder.size, nil, "0", {
+	fontId = FONTS.MEDIUM,
+	textAlign = LEFTMID,
+	isNumeric = true,
+	returnKeyType = KEYBOARD_RETURN.SEND,
+	inputType = KEYBOARD_INPUT.DEFAULT,
+	allowNegative = false,
+})
+
+local color_a_input_holder = UIElement:new({
+	parent = window,
+	pos = { 250, 290 },
+	size = { 75, 30 },
+	interactive = true,
+	textfield = true,
+
+})
+
+local color_a_input = TBMenu:spawnTextField2(color_a_input_holder, color_a_input_holder.size, nil, "0", {
+	fontId = FONTS.MEDIUM,
+	textAlign = LEFTMID,
+	isNumeric = true,
+	returnKeyType = KEYBOARD_RETURN.SEND,
+	inputType = KEYBOARD_INPUT.DEFAULT,
+	allowNegative = false
 })
 
 local adjust_button = UIElement:new({
-    parent = window,
-    pos = { 10, 250 },
-    size = { 150, 30 },
+	parent = window,
+	pos = { 10, 330 },
+	size = { 150, 30 },
 	interactive = true,
 	bgColor = TB_MENU_DEFAULT_DARKER_COLOR,
 	hoverColor = TB_MENU_DEFAULT_LIGHTER_COLOR,
 	shapeType = ROUNDED,
 	rounded = 5,
 })
-
 adjust_button:addAdaptedText(false, "Apply")
 adjust_button:addMouseHandlers(nil, function()
 	apply()
 end)
 
 local adjust_button = UIElement:new({
-    parent = window,
-    pos = { 170, 250 },
-    size = { 150, 30 },
+	parent = window,
+	pos = { 170, 330 },
+	size = { 150, 30 },
 	interactive = true,
 	bgColor = TB_MENU_DEFAULT_DARKER_COLOR,
 	hoverColor = TB_MENU_DEFAULT_LIGHTER_COLOR,
@@ -215,12 +295,8 @@ end
 
 function apply()
 	runCmd("clear")
-	if (start_index_input.textfieldstr[1] == "") or (end_index_input.textfieldstr[1] == "") then
-		echo("Start object and end object ids are required")
-	else
-		painful_moving()
-		-- simple_moving()
-	end
+	painful_moving()
+	-- simple_moving()
 end
 
 function painful_moving()
@@ -229,9 +305,9 @@ function painful_moving()
 
 	--Read File
 	local file = Files.Open(path, FILES_MODE_READONLY)
-	if not (file.data) then 
+	if not (file.data) then
 		echo("Mod not found")
-		return 
+		return
 	end
 	echo("Mod found")
 	echo("owo what is this?")
@@ -239,32 +315,65 @@ function painful_moving()
 	file:close()
 	echo("Read done")
 
-	local i_start = tonumber(start_index_input.textfieldstr[1])
-	local i_end = tonumber(end_index_input.textfieldstr[1])
+	local i_start = (tonumber(start_index_input.textfieldstr[1]) or 1)
+	local i_end = tonumber(end_index_input.textfieldstr[1]) or 256
 	local offset_x = tonumber(offset_x_input.textfieldstr[1]) or 0
-    local offset_y = tonumber(offset_y_input.textfieldstr[1]) or 0
-    local offset_z = tonumber(offset_z_input.textfieldstr[1]) or 0
+	local offset_y = tonumber(offset_y_input.textfieldstr[1]) or 0
+	local offset_z = tonumber(offset_z_input.textfieldstr[1]) or 0
+
+	local modified_lines = {} --tmp solution hopefully
+	local environment_objects = {}
+
+	local reader_env_obj_id
+	local reader_env_obj_tracked = false
 
 	echo("values set")
 
-	local modified_lines = {}
-
-	for obj_index = i_start, i_end do
-		local in_target_obj = false
-		for i, line in pairs(content) do
-	
-			if line:match("^env_obj%s+" .. obj_index .. "%s*$") then
-				in_target_obj = true
-			end
-				
-			if in_target_obj == true and line:match("^%s*pos%s+") then
-				local x,y,z = get_obj_pos(obj_index - 1)
-				local new_x = x + offset_x
-				local new_y = y + offset_y
-				local new_z = z + offset_z
-				modified_lines[i] = string.format("   pos %.2f %.2f %.2f", new_x, new_y, new_z)
+	for i, line in pairs(content) do
+		
+		while true do --allows continue like behaviour
+			local match
+			match = tonumber(string.match(line, "^env_obj%s+(%d+)$"))
+			if match then
+				reader_env_obj_id = match
+				environment_objects[reader_env_obj_id] = {}
+				reader_env_obj_tracked = reader_env_obj_id >= i_start and reader_env_obj_id <= i_end
 				break
 			end
+
+			if line:match("^%s*pos%s+") then
+				local x, y, z = get_obj_pos(reader_env_obj_id - 1)
+				environment_objects[reader_env_obj_id].pos = {}
+				environment_objects[reader_env_obj_id].pos.x = x + offset_x
+				environment_objects[reader_env_obj_id].pos.y = y + offset_y
+				environment_objects[reader_env_obj_id].pos.z = z + offset_z
+
+				if reader_env_obj_tracked == true then
+					modified_lines[i] = string.format(
+						"   pos %.2f %.2f %.2f",
+						environment_objects[reader_env_obj_id].pos.x,
+						environment_objects[reader_env_obj_id].pos.y,
+						environment_objects[reader_env_obj_id].pos.z
+					)
+				end
+				break
+			end
+
+			if line:match("^%s*color%s+") then
+				environment_objects[reader_env_obj_id].color = get_obj_color(reader_env_obj_id - 1)
+				if reader_env_obj_tracked == true then
+					modified_lines[i] = string.format(
+						"   color %.8f %.8f %.8f %.8f",
+						environment_objects[reader_env_obj_id].color[1],
+						environment_objects[reader_env_obj_id].color[2],
+						environment_objects[reader_env_obj_id].color[3],
+						environment_objects[reader_env_obj_id].color[4]
+					)
+					echo(modified_lines[i])
+				end
+				break
+			end
+			break
 		end
 	end
 
@@ -274,7 +383,6 @@ function painful_moving()
 	file = Files.Open(path, FILES_MODE_WRITE)
 	if (file.data) then
 		echo("write started")
-		-- Write a simple string to the file
 		for i, line in pairs(content) do
 			if modified_lines[i] then
 				file:writeLine(modified_lines[i])
@@ -282,7 +390,6 @@ function painful_moving()
 				file:writeLine(line)
 			end
 		end
-		
 		-- Close the file to save changes
 		echo("File written successfully.")
 	else
@@ -296,19 +403,18 @@ function painful_moving()
 end
 
 -- Simple and efficient, but this approach resets on new game :)))
-
 function simple_moving()
-	local i_start = tonumber(start_index_input.textfieldstr[1]) - 1
-	local i_end = tonumber(end_index_input.textfieldstr[1]) - 1
+	local i_start = tonumber(start_index_input.textfieldstr[1]) or 1
+	local i_end = tonumber(end_index_input.textfieldstr[1]) or 256
 	local offset_x = tonumber(offset_x_input.textfieldstr[1]) or 0
-    local offset_y = tonumber(offset_y_input.textfieldstr[1]) or 0
-    local offset_z = tonumber(offset_z_input.textfieldstr[1]) or 0
+	local offset_y = tonumber(offset_y_input.textfieldstr[1]) or 0
+	local offset_z = tonumber(offset_z_input.textfieldstr[1]) or 0
 
-    for i = i_start, i_end do
-		local x,y,z = get_obj_pos(i)
+	for i = i_start, i_end do
+		local x, y, z = get_obj_pos(i - 1)
 		x = x + offset_x
 		y = y + offset_y
 		z = z + offset_z
 		set_obj_pos(i, x, y, z)
-    end
+	end
 end
