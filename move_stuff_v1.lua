@@ -1,9 +1,10 @@
 -- some spaghetti code by joope1
-require("toriui/uielement")
-require("system.menu_defines")
-require("system.menu_manager")
-require("system.mods_manager")
-require("system.iofiles")
+package.path = package.path .. ";../?.lua"
+
+local uielement = require("toriui/uielement")
+local menu_defines = require("system/menu_defines")
+local menu_manager = require("system/menu_manager")
+local mods_manager = require("system/mods_manager")
 
 -- UI stuff
 local header = UIElement:new({
