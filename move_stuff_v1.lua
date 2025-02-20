@@ -334,7 +334,7 @@ function process_request()
 	file:close()
 	echo("Read done")
 
-	local i_start = (tonumber(start_index_input.textfieldstr[1]) or 1)
+	local i_start = tonumber(start_index_input.textfieldstr[1]) or 1
 	local i_end = tonumber(end_index_input.textfieldstr[1]) or 256
 
 	local offset_x = tonumber(offset_x_input.textfieldstr[1]) or 0
@@ -352,16 +352,21 @@ function process_request()
 
 	for i, line in pairs(content) do
 		while true do --allows continue like behaviour
-			local match
-			match = tonumber(string.match(line, "^env_obj%s+(%d+)$"))
-			if match then
-				reader_env_obj_id = match
+			if line:find("env_obj_joint") or line:find("player") then
+				reader_env_obj_id = nil
+				reader_env_obj_tracked = false
+				break
+			end
+
+			local new_env_obj_id = tonumber(string.match(line, "^env_obj%s+(%d+)$"))
+			if new_env_obj_id then
+				reader_env_obj_id = new_env_obj_id
 				environment_objects[reader_env_obj_id] = {}
 				reader_env_obj_tracked = reader_env_obj_id >= i_start and reader_env_obj_id <= i_end
 				break
 			end
 
-			if line:match("^%s*pos%s+") then
+			if reader_env_obj_id and line:match("^%s*pos%s+") then
 				local x, y, z = get_obj_pos(reader_env_obj_id - 1)
 				environment_objects[reader_env_obj_id].pos = {}
 				environment_objects[reader_env_obj_id].pos.x = x + offset_x
@@ -379,7 +384,7 @@ function process_request()
 				break
 			end
 
-			if line:match("^%s*color%s+") then
+			if reader_env_obj_id and line:match("^%s*color%s+") then
 				environment_objects[reader_env_obj_id].color = get_obj_color(reader_env_obj_id - 1)
 				if reader_env_obj_tracked == true and new_color_line then
 					modified_lines[i] = new_color_line
