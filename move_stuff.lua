@@ -1,10 +1,9 @@
--- some spaghetti code by joope1
-
 --should allow using seperate folder
 if not require("toriui/uielement") then
 	package.path = package.path .. ";../?.lua"
 end
 
+require("tb-move-stuff/rotating")
 local uielement = require("toriui/uielement")
 local menu_defines = require("system/menu_defines")
 local menu_manager = require("system/menu_manager")
@@ -64,7 +63,7 @@ local start_index_input_holder = UIElement:new({
 	textfield = true,
 })
 local start_index_input = TBMenu:spawnTextField2(start_index_input_holder, start_index_input_holder.size, "1", "1", {
-	fontId = FONTS.MEDIUM,
+	fontId = FONTS.SMALL,
 	textAlign = LEFTMID,
 	isNumeric = true,
 	returnKeyType = KEYBOARD_RETURN.SEND,
@@ -87,7 +86,7 @@ local end_index_input_holder = UIElement:new({
 	textfield = true,
 })
 local end_index_input = TBMenu:spawnTextField2(end_index_input_holder, end_index_input_holder.size, "256", "256", {
-	fontId = FONTS.MEDIUM,
+	fontId = FONTS.SMALL,
 	textAlign = LEFTMID,
 	isNumeric = true,
 	returnKeyType = KEYBOARD_RETURN.SEND,
@@ -95,106 +94,262 @@ local end_index_input = TBMenu:spawnTextField2(end_index_input_holder, end_index
 	allowNegative = false,
 })
 
-local move_sect_label = UIElement:new({
+
+local input_group1 = UIElement:new({
 	parent = window,
 	pos = { 10, 90 },
-	size = { 150, 30 },
+	size = { 310, 60 },
 })
-move_sect_label:addAdaptedText(false, "Position offset")
-
-local offset_x_label = UIElement:new({
-	parent = window,
-	pos = { 10, 130 },
-	size = { 100, 30 },
+local input_group1_label = UIElement:new({
+	parent = input_group1,
+	pos = { 0, 0 },
+	size = { 130, 25 },
 })
-offset_x_label:addAdaptedText(false, "Offset X:")
+input_group1_label:addAdaptedText(false, "Position offset")
 
+local offset_x_input_label = UIElement:new({
+	parent = input_group1,
+	pos = { 0, 30 },
+	size = { 10, 25 },
+})
+offset_x_input_label:addAdaptedText(false, "X")
 local offset_x_input_holder = UIElement:new({
-	parent = window,
-	pos = { 170, 130 },
-	size = { 150, 30 },
+	parent = input_group1,
+	pos = { 20, 30 },
+	size = { 50, 25 },
 	interactive = true,
 	textfield = true,
 })
-local offset_x_input = TBMenu:spawnTextField2(offset_x_input_holder, offset_x_input_holder.size, nil, "0", {
-	fontId = FONTS.MEDIUM,
+local pos_offset_x_input = TBMenu:spawnTextField2(offset_x_input_holder, offset_x_input_holder.size, nil, "0", {
+	fontId = FONTS.SMALL,
 	textAlign = LEFTMID,
 	isNumeric = true,
 	allowDecimal = true,
 	returnKeyType = KEYBOARD_RETURN.SEND,
-	inputType = KEYBOARD_INPUT.DEFAULT
+	inputType = KEYBOARD_INPUT.DEFAULT,
 })
 
-local offset_y_label = UIElement:new({
-	parent = window,
-	pos = { 10, 170 },
-	size = { 100, 30 },
+local offset_y_input_label = UIElement:new({
+	parent = input_group1,
+	pos = { 80, 30 },
+	size = { 10, 25 },
 })
-offset_y_label:addAdaptedText(false, "Offset Y:")
-
+offset_y_input_label:addAdaptedText(false, "Y")
 local offset_y_input_holder = UIElement:new({
-	parent = window,
-	pos = { 170, 170 },
-	size = { 150, 30 },
+	parent = input_group1,
+	pos = { 100, 30 },
+	size = { 50, 25 },
 	interactive = true,
 	textfield = true,
 })
-local offset_y_input = TBMenu:spawnTextField2(offset_y_input_holder, offset_y_input_holder.size, nil, "0", {
-	fontId = FONTS.MEDIUM,
+local pos_offset_y_input = TBMenu:spawnTextField2(offset_y_input_holder, offset_y_input_holder.size, nil, "0", {
+	fontId = FONTS.SMALL,
 	textAlign = LEFTMID,
 	isNumeric = true,
 	allowDecimal = true,
 	returnKeyType = KEYBOARD_RETURN.SEND,
-	inputType = KEYBOARD_INPUT.DEFAULT
+	inputType = KEYBOARD_INPUT.DEFAULT,
 })
 
+local offset_z_input_label = UIElement:new({
+	parent = input_group1,
+	pos = { 160, 30 },
+	size = { 10, 25 },
+})
+offset_z_input_label:addAdaptedText(false, "Z")
+local offset_z_input_holder = UIElement:new({
+	parent = input_group1,
+	pos = { 180, 30 },
+	size = { 50, 25 },
+	interactive = true,
+	textfield = true,
+})
+local pos_offset_z_input = TBMenu:spawnTextField2(offset_z_input_holder, offset_z_input_holder.size, nil, "0", {
+	fontId = FONTS.SMALL,
+	textAlign = LEFTMID,
+	isNumeric = true,
+	allowDecimal = true,
+	returnKeyType = KEYBOARD_RETURN.SEND,
+	inputType = KEYBOARD_INPUT.DEFAULT,
+})
 
-local offset_z_label = UIElement:new({
+local input_group2 = UIElement:new({
+	parent = window,
+	pos = { 10, 150 },
+	size = { 310, 60 },
+})
+local input_group2_label = UIElement:new({
+	parent = input_group2,
+	pos = { 0, 0 },
+	size = { 130, 25 },
+})
+input_group2_label:addAdaptedText(false, "Rotation offset")
+
+local rot_offset_x_input_label = UIElement:new({
+	parent = input_group2,
+	pos = { 0, 30 },
+	size = { 10, 25 },
+})
+rot_offset_x_input_label:addAdaptedText(false, "X")
+local offset_x_input_holder = UIElement:new({
+	parent = input_group2,
+	pos = { 20, 30 },
+	size = { 50, 25 },
+	interactive = true,
+	textfield = true,
+})
+local rot_offset_x_input = TBMenu:spawnTextField2(offset_x_input_holder, offset_x_input_holder.size, nil, "0", {
+	fontId = FONTS.SMALL,
+	textAlign = LEFTMID,
+	isNumeric = true,
+	allowDecimal = true,
+	returnKeyType = KEYBOARD_RETURN.SEND,
+	inputType = KEYBOARD_INPUT.DEFAULT,
+})
+
+local rot_offset_y_input_label = UIElement:new({
+	parent = input_group2,
+	pos = { 80, 30 },
+	size = { 10, 25 },
+})
+rot_offset_y_input_label:addAdaptedText(false, "Y")
+local offset_y_input_holder = UIElement:new({
+	parent = input_group2,
+	pos = { 100, 30 },
+	size = { 50, 25 },
+	interactive = true,
+	textfield = true,
+})
+local rot_offset_y_input = TBMenu:spawnTextField2(offset_y_input_holder, offset_y_input_holder.size, nil, "0", {
+	fontId = FONTS.SMALL,
+	textAlign = LEFTMID,
+	isNumeric = true,
+	allowDecimal = true,
+	returnKeyType = KEYBOARD_RETURN.SEND,
+	inputType = KEYBOARD_INPUT.DEFAULT,
+})
+
+local rot_offset_z_input_label = UIElement:new({
+	parent = input_group2,
+	pos = { 160, 30 },
+	size = { 10, 25 },
+})
+rot_offset_z_input_label:addAdaptedText(false, "Z")
+local offset_z_input_holder = UIElement:new({
+	parent = input_group2,
+	pos = { 180, 30 },
+	size = { 50, 25 },
+	interactive = true,
+	textfield = true,
+})
+local rot_offset_z_input = TBMenu:spawnTextField2(offset_z_input_holder, offset_z_input_holder.size, nil, "0", {
+	fontId = FONTS.SMALL,
+	textAlign = LEFTMID,
+	isNumeric = true,
+	allowDecimal = true,
+	returnKeyType = KEYBOARD_RETURN.SEND,
+	inputType = KEYBOARD_INPUT.DEFAULT,
+})
+
+local input_group3 = UIElement:new({
 	parent = window,
 	pos = { 10, 210 },
-	size = { 100, 30 },
+	size = { 310, 60 },
 })
-offset_z_label:addAdaptedText(false, "Offset Z:")
+local input_group3_label = UIElement:new({
+	parent = input_group3,
+	pos = { 0, 0 },
+	size = { 150, 25 },
+})
+input_group3_label:addAdaptedText(false, "Rotation Axis Point")
 
-local offset_z_input_holder = UIElement:new({
-	parent = window,
-	pos = { 170, 210 },
-	size = { 150, 30 },
+local rot_axis_x_input_label = UIElement:new({
+	parent = input_group3,
+	pos = { 0, 30 },
+	size = { 10, 25 },
+})
+rot_axis_x_input_label:addAdaptedText(false, "X")
+local offset_x_input_holder = UIElement:new({
+	parent = input_group3,
+	pos = { 20, 30 },
+	size = { 50, 25 },
 	interactive = true,
 	textfield = true,
-
 })
-local offset_z_input = TBMenu:spawnTextField2(offset_z_input_holder, offset_z_input_holder.size, nil, "0", {
-	fontId = FONTS.MEDIUM,
+local rot_axis_x_input = TBMenu:spawnTextField2(offset_x_input_holder, offset_x_input_holder.size, nil, "0", {
+	fontId = FONTS.SMALL,
 	textAlign = LEFTMID,
 	isNumeric = true,
 	allowDecimal = true,
 	returnKeyType = KEYBOARD_RETURN.SEND,
-	inputType = KEYBOARD_INPUT.DEFAULT
+	inputType = KEYBOARD_INPUT.DEFAULT,
+})
+
+local rot_axis_y_input_label = UIElement:new({
+	parent = input_group3,
+	pos = { 80, 30 },
+	size = { 10, 25 },
+})
+rot_axis_y_input_label:addAdaptedText(false, "Y")
+local offset_y_input_holder = UIElement:new({
+	parent = input_group3,
+	pos = { 100, 30 },
+	size = { 50, 25 },
+	interactive = true,
+	textfield = true,
+})
+local rot_axis_y_input = TBMenu:spawnTextField2(offset_y_input_holder, offset_y_input_holder.size, nil, "0", {
+	fontId = FONTS.SMALL,
+	textAlign = LEFTMID,
+	isNumeric = true,
+	allowDecimal = true,
+	returnKeyType = KEYBOARD_RETURN.SEND,
+	inputType = KEYBOARD_INPUT.DEFAULT,
+})
+
+local rot_axis_z_input_label = UIElement:new({
+	parent = input_group3,
+	pos = { 160, 30 },
+	size = { 10, 25 },
+})
+rot_axis_z_input_label:addAdaptedText(false, "Z")
+local offset_z_input_holder = UIElement:new({
+	parent = input_group3,
+	pos = { 180, 30 },
+	size = { 50, 25 },
+	interactive = true,
+	textfield = true,
+})
+local rot_axis_z_input = TBMenu:spawnTextField2(offset_z_input_holder, offset_z_input_holder.size, nil, "0", {
+	fontId = FONTS.SMALL,
+	textAlign = LEFTMID,
+	isNumeric = true,
+	allowDecimal = true,
+	returnKeyType = KEYBOARD_RETURN.SEND,
+	inputType = KEYBOARD_INPUT.DEFAULT,
 })
 
 local color_sect_label = UIElement:new({
 	parent = window,
-	pos = { 10, 250 },
-	size = { 70, 30 },
+	pos = { 10, 265 },
+	size = { 45, 25 },
 })
 color_sect_label:addAdaptedText(false, "Color")
-
 local color_r_input_label = UIElement:new({
 	parent = window,
 	pos = { 10, 290 },
-	size = { 10, 30 },
+	size = { 10, 25 },
 })
 color_r_input_label:addAdaptedText(false, "R")
 local color_r_input_holder = UIElement:new({
 	parent = window,
 	pos = { 30, 290 },
-	size = { 50, 30 },
+	size = { 50, 25 },
 	interactive = true,
 	textfield = true,
 })
 local color_r_input = TBMenu:spawnTextField2(color_r_input_holder, color_r_input_holder.size, nil, "0", {
-	fontId = FONTS.MEDIUM,
+	fontId = FONTS.SMALL,
 	textAlign = LEFTMID,
 	isNumeric = true,
 	returnKeyType = KEYBOARD_RETURN.SEND,
@@ -205,18 +360,18 @@ local color_r_input = TBMenu:spawnTextField2(color_r_input_holder, color_r_input
 local color_g_input_label = UIElement:new({
 	parent = window,
 	pos = { 90, 290 },
-	size = { 10, 30 },
+	size = { 10, 25 },
 })
 color_g_input_label:addAdaptedText(false, "G")
 local color_g_input_holder = UIElement:new({
 	parent = window,
 	pos = { 110, 290 },
-	size = { 50, 30 },
+	size = { 50, 25 },
 	interactive = true,
 	textfield = true,
 })
 local color_g_input = TBMenu:spawnTextField2(color_g_input_holder, color_g_input_holder.size, nil, "0", {
-	fontId = FONTS.MEDIUM,
+	fontId = FONTS.SMALL,
 	textAlign = LEFTMID,
 	isNumeric = true,
 	returnKeyType = KEYBOARD_RETURN.SEND,
@@ -227,18 +382,18 @@ local color_g_input = TBMenu:spawnTextField2(color_g_input_holder, color_g_input
 local color_b_input_label = UIElement:new({
 	parent = window,
 	pos = { 170, 290 },
-	size = { 10, 30 },
+	size = { 10, 25 },
 })
 color_b_input_label:addAdaptedText(false, "B")
 local color_b_input_holder = UIElement:new({
 	parent = window,
 	pos = { 190, 290 },
-	size = { 50, 30 },
+	size = { 50, 25 },
 	interactive = true,
 	textfield = true,
 })
 local color_b_input = TBMenu:spawnTextField2(color_b_input_holder, color_b_input_holder.size, nil, "0", {
-	fontId = FONTS.MEDIUM,
+	fontId = FONTS.SMALL,
 	textAlign = LEFTMID,
 	isNumeric = true,
 	returnKeyType = KEYBOARD_RETURN.SEND,
@@ -249,18 +404,18 @@ local color_b_input = TBMenu:spawnTextField2(color_b_input_holder, color_b_input
 local color_a_input_label = UIElement:new({
 	parent = window,
 	pos = { 250, 290 },
-	size = { 10, 30 },
+	size = { 10, 25 },
 })
 color_a_input_label:addAdaptedText(false, "A")
 local color_a_input_holder = UIElement:new({
 	parent = window,
 	pos = { 270, 290 },
-	size = { 50, 30 },
+	size = { 50, 25 },
 	interactive = true,
 	textfield = true,
 })
 local color_a_input = TBMenu:spawnTextField2(color_a_input_holder, color_a_input_holder.size, nil, "255", {
-	fontId = FONTS.MEDIUM,
+	fontId = FONTS.SMALL,
 	textAlign = LEFTMID,
 	isNumeric = true,
 	returnKeyType = KEYBOARD_RETURN.SEND,
@@ -337,9 +492,26 @@ function process_request()
 	local i_start = tonumber(start_index_input.textfieldstr[1]) or 1
 	local i_end = tonumber(end_index_input.textfieldstr[1]) or 256
 
-	local offset_x = tonumber(offset_x_input.textfieldstr[1]) or 0
-	local offset_y = tonumber(offset_y_input.textfieldstr[1]) or 0
-	local offset_z = tonumber(offset_z_input.textfieldstr[1]) or 0
+	local pos_offset_x = tonumber(pos_offset_x_input.textfieldstr[1]) or 0
+	local pos_offset_y = tonumber(pos_offset_y_input.textfieldstr[1]) or 0
+	local pos_offset_z = tonumber(pos_offset_z_input.textfieldstr[1]) or 0
+
+	local rot_offsets = {
+		x = math.rad(tonumber(rot_offset_x_input.textfieldstr[1]) or 0),
+		y = math.rad(tonumber(rot_offset_y_input.textfieldstr[1]) or 0),
+		z = math.rad(tonumber(rot_offset_z_input.textfieldstr[1]) or 0)
+	}
+
+	-- The point around which to rotate
+	local axisPoint = {
+		x = tonumber(rot_axis_x_input.textfieldstr[1]) or 0,
+		y = tonumber(rot_axis_y_input.textfieldstr[1]) or 0,
+		z = tonumber(rot_axis_z_input.textfieldstr[1]) or 0
+	}
+
+	-- account for random modmaker offset :))
+	axisPoint.x = axisPoint.x + 1
+	axisPoint.y = axisPoint.y - 0.1
 
 	local new_color_line = color_input_to_line()
 	local modified_lines = {} --tmp solution hopefully
@@ -367,19 +539,35 @@ function process_request()
 			end
 
 			if reader_env_obj_id and line:match("^%s*pos%s+") then
-				local x, y, z = get_obj_pos(reader_env_obj_id - 1)
-				environment_objects[reader_env_obj_id].pos = {}
-				environment_objects[reader_env_obj_id].pos.x = x + offset_x
-				environment_objects[reader_env_obj_id].pos.y = y + offset_y
-				environment_objects[reader_env_obj_id].pos.z = z + offset_z
+				local pos = { x = 0, y = 0, z = 0 }
+				pos.x, pos.y, pos.z = get_obj_pos(reader_env_obj_id - 1)
+
+				--applying offset
+				pos.x = pos.x + pos_offset_x
+				pos.y = pos.y + pos_offset_y
+				pos.z = pos.z + pos_offset_z
+
+				SetRotPos(pos, axisPoint, rot_offsets)
+				environment_objects[reader_env_obj_id].pos = pos
 
 				if reader_env_obj_tracked == true then
-					modified_lines[i] = string.format(
-						"   pos %.2f %.2f %.2f",
-						environment_objects[reader_env_obj_id].pos.x,
-						environment_objects[reader_env_obj_id].pos.y,
-						environment_objects[reader_env_obj_id].pos.z
-					)
+					modified_lines[i] = string.format("   pos %.2f %.2f %.2f", pos.x, pos.y, pos.z)
+				end
+				break
+			end
+
+			if reader_env_obj_id and line:match("^%s*rot%s+") then
+				local obj_rot = {}
+				for num in string.gmatch(line, "[+-]?%d+%.?%d*") do
+					local num = math.rad(tonumber(num) or 0)
+					table.insert(obj_rot, num)
+				end
+
+				SetRotOffset(obj_rot, rot_offsets)
+				environment_objects[reader_env_obj_id].rot = obj_rot
+
+				if reader_env_obj_tracked == true then
+					modified_lines[i] = string.format("   rot %.2f %.2f %.2f", obj_rot[1], obj_rot[2], obj_rot[3])
 				end
 				break
 			end
@@ -409,7 +597,6 @@ function process_request()
 				file:writeLine(line)
 			end
 		end
-		-- Close the file to save changes
 		echo("File written successfully.")
 	else
 		echo("Error: Unable to open file.")
@@ -448,21 +635,4 @@ function color_input_to_line()
 	end
 
 	return string.format("   color %.8f %.8f %.8f %.8f", color.r, color.g, color.b, color.a)
-end
-
--- Simple and efficient, but this approach resets on new game :)))
-function simple_moving()
-	local i_start = tonumber(start_index_input.textfieldstr[1]) or 1
-	local i_end = tonumber(end_index_input.textfieldstr[1]) or 256
-	local offset_x = tonumber(offset_x_input.textfieldstr[1]) or 0
-	local offset_y = tonumber(offset_y_input.textfieldstr[1]) or 0
-	local offset_z = tonumber(offset_z_input.textfieldstr[1]) or 0
-
-	for i = i_start, i_end do
-		local x, y, z = get_obj_pos(i - 1)
-		x = x + offset_x
-		y = y + offset_y
-		z = z + offset_z
-		set_obj_pos(i, x, y, z)
-	end
 end
