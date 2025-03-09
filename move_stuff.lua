@@ -496,24 +496,23 @@ function process_request()
 	local pos_offset_y = tonumber(pos_offset_y_input.textfieldstr[1]) or 0
 	local pos_offset_z = tonumber(pos_offset_z_input.textfieldstr[1]) or 0
 
-	local rotAngles = {
-		math.rad(tonumber(rot_offset_x_input.textfieldstr[1]) or 0),
-		math.rad(tonumber(rot_offset_y_input.textfieldstr[1]) or 0),
-		math.rad(tonumber(rot_offset_z_input.textfieldstr[1]) or 0)
+	local rot_offsets = {
+		x = math.rad(tonumber(rot_offset_x_input.textfieldstr[1]) or 0),
+		y = math.rad(tonumber(rot_offset_y_input.textfieldstr[1]) or 0),
+		z = math.rad(tonumber(rot_offset_z_input.textfieldstr[1]) or 0)
 	}
 
 	-- The point around which to rotate
 	local axisPoint = {
-		tonumber(rot_axis_x_input.textfieldstr[1]) or 0,
-		tonumber(rot_axis_y_input.textfieldstr[1]) or 0,
-		tonumber(rot_axis_z_input.textfieldstr[1]) or 0
+		x = tonumber(rot_axis_x_input.textfieldstr[1]) or 0,
+		y = tonumber(rot_axis_y_input.textfieldstr[1]) or 0,
+		z = tonumber(rot_axis_z_input.textfieldstr[1]) or 0
 	}
 
 	-- account for random modmaker offset :))
-	axisPoint[1] = axisPoint[1] + 1
-	axisPoint[2] = axisPoint[2] - 0.1
+	axisPoint.x = axisPoint.x + 1
+	axisPoint.y = axisPoint.y - 0.1
 
-	local rotationMatrix = GetDefaultRotationMatrix(rotAngles)
 	local new_color_line = color_input_to_line()
 	local modified_lines = {} --tmp solution hopefully
 	local environment_objects = {}
@@ -540,19 +539,19 @@ function process_request()
 			end
 
 			if reader_env_obj_id and line:match("^%s*pos%s+") then
-				local x, y, z = get_obj_pos(reader_env_obj_id - 1)
-				local pos = { x, y, z }
+				local pos = { x = 0, y = 0, z = 0 }
+				pos.x, pos.y, pos.z = get_obj_pos(reader_env_obj_id - 1)
 
 				--applying offset
-				pos[1] = x + pos_offset_x
-				pos[2] = y + pos_offset_y
-				pos[3] = z + pos_offset_z
+				pos.x = pos.x + pos_offset_x
+				pos.y = pos.y + pos_offset_y
+				pos.z = pos.z + pos_offset_z
 
-				pos = GetRotatedPos(rotationMatrix, axisPoint, pos)
+				SetRotPos(pos, axisPoint, rot_offsets)
 				environment_objects[reader_env_obj_id].pos = pos
 
 				if reader_env_obj_tracked == true then
-					modified_lines[i] = string.format("   pos %.2f %.2f %.2f", pos[1], pos[2], pos[3])
+					modified_lines[i] = string.format("   pos %.2f %.2f %.2f", pos.x, pos.y, pos.z)
 				end
 				break
 			end
@@ -560,21 +559,16 @@ function process_request()
 			if reader_env_obj_id and line:match("^%s*rot%s+") then
 				local obj_rot = {}
 				for num in string.gmatch(line, "[+-]?%d+%.?%d*") do
-					local num = tonumber(num) or 0
-					if not num == 0 then
-						num = math.rad(num)
-					end
-
+					local num = math.rad(tonumber(num) or 0)
 					table.insert(obj_rot, num)
 				end
 
-				obj_rot = CalcRotation(rotAngles, obj_rot, axisPoint)
-
+				SetRotOffset(obj_rot, rot_offsets)
 				environment_objects[reader_env_obj_id].rot = obj_rot
 
-				-- if reader_env_obj_tracked == true then
-				-- 	modified_lines[i] = string.format("   rot %.2f %.2f %.2f", obj_rot[1], obj_rot[2], obj_rot[3])
-				-- end
+				if reader_env_obj_tracked == true then
+					modified_lines[i] = string.format("   rot %.2f %.2f %.2f", obj_rot[1], obj_rot[2], obj_rot[3])
+				end
 				break
 			end
 
